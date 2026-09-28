@@ -1,2 +1,4 @@
-# eyecare-gamma
-sunglasses
+pre requistes 
+
+run npm install 
+then run npm run build
