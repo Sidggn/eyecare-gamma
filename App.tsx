@@ -622,8 +622,6 @@ function ThreeDGlasses({ cfg, rotation }: { cfg: any, rotation: number }) {
 export default function App() {
   const activeTab: string = "Frame";
   const [rotation, setRotation] = useState(0);
-  const [submitted, setSubmitted] = useState(false);
-  
   // Configuration State
   const [cfg, setCfg] = useState({
     shape: "wayfarer",
@@ -665,6 +663,48 @@ export default function App() {
   });
 
   const updateCfg = (key: string) => (val: any) => setCfg(prev => ({ ...prev, [key]: val }));
+
+  const openSubmissionSummary = () => {
+    const shape = FRAME_SHAPES.find(item => item.id === cfg.shape)?.label ?? cfg.shape;
+    const frameColor = FRAME_COLORS.find(item => item.id === cfg.frameColor)?.label ?? cfg.frameColor;
+    const shadeColor = LENS_COLORS.find(item => item.id === cfg.lensColor)?.label ?? cfg.lensColor;
+    const size = SIZES.find(item => item.id === cfg.size)?.label ?? cfg.size;
+    const summaryWindow = window.open("", "_blank", "width=640,height=720");
+
+    if (!summaryWindow) return;
+
+    summaryWindow.document.write(`<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sunglass customisation summary</title>
+    <style>
+      :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f6f8fb; color: #111827; }
+      main { width: min(520px, calc(100% - 40px)); padding: 40px; box-sizing: border-box; background: white; border: 1px solid #e5e7eb; border-radius: 24px; box-shadow: 0 20px 50px rgba(15, 23, 42, .12); }
+      h1 { margin: 0 0 10px; font-size: 24px; line-height: 1.25; }
+      p { margin: 0 0 28px; color: #6b7280; line-height: 1.6; }
+      dl { margin: 0; display: grid; gap: 14px; }
+      div { display: flex; justify-content: space-between; gap: 24px; padding-bottom: 14px; border-bottom: 1px solid #eef0f3; }
+      dt { color: #6b7280; } dd { margin: 0; font-weight: 700; text-align: right; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Yeah! Thank you for Customising your sunglass</h1>
+      <p>Here is a summary of your selected sunglasses.</p>
+      <dl>
+        <div><dt>Frame shape</dt><dd>${shape}</dd></div>
+        <div><dt>Frame color</dt><dd>${frameColor}</dd></div>
+        <div><dt>Shade color</dt><dd>${shadeColor}</dd></div>
+        <div><dt>Size</dt><dd>${size}</dd></div>
+      </dl>
+    </main>
+  </body>
+</html>`);
+    summaryWindow.document.close();
+  };
 
   return (
     <div className="md:h-screen w-full bg-white text-gray-900 font-sans flex flex-col md:flex-row md:overflow-hidden">
@@ -810,20 +850,13 @@ export default function App() {
 
                 <button
                   type="button"
-                  onClick={() => setSubmitted(true)}
+                  onClick={openSubmissionSummary}
                   className="w-full rounded-xl bg-gray-900 px-5 py-4 text-sm font-semibold text-white transition hover:bg-gray-700"
                 >
                   Click here to submit
                 </button>
 
-                {submitted && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true" aria-labelledby="thank-you-title">
-                    <div className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-2xl">
-                      <h2 id="thank-you-title" className="text-xl font-semibold text-gray-900">Yeah! Thank you for Customising your sunglass</h2>
-                      <button type="button" onClick={() => setSubmitted(false)} className="mt-6 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-700">Close</button>
-                    </div>
-                  </div>
-                )}
+
               </div>
             )}
 
