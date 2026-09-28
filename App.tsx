@@ -8,21 +8,14 @@ const FRAME_SHAPES = [
   { id: "wayfarer", label: "Wayfarer" },
   { id: "aviator", label: "Aviator" },
   { id: "round", label: "Round" },
-  { id: "catEye", label: "Cat-eye" },
   { id: "rectangular", label: "Rectangular" },
-  { id: "hexagonal", label: "Hexagonal" },
-  { id: "oversized", label: "Oversized" },
-  { id: "shield", label: "Shield" },
 ];
 
-const FRAME_COLORS = [
-  { id: "matte-black", label: "Matte Black", hex: "#20211f" },
-  { id: "tortoise", label: "Tortoise", hex: "#8a5a2b", pattern: true },
-  { id: "crystal", label: "Crystal Clear", hex: "#e8e4da", crystal: true },
-  { id: "gold", label: "Gold", hex: "#c9a227" },
-  { id: "rose-gold", label: "Rose Gold", hex: "#b98a96" },
-  { id: "pastel", label: "Pastel Mint", hex: "#a4cbb4" },
-  { id: "gradient", label: "Gradient/Two-Tone", hex: "linear-gradient(135deg, #20211f, #e8e4da)" },
+const FRAME_COLORS: any[] = [
+  { id: "black", label: "Black", hex: "#20211f" },
+  { id: "brown", label: "Brown", hex: "#8a5a2b" },
+  { id: "grey", label: "Grey", hex: "#777777" },
+  { id: "yellow", label: "Yellow", hex: "#c9a227" },
 ];
 
 const FRAME_MATERIALS = [
@@ -47,11 +40,9 @@ const FRAME_WIDTHS = [
 ];
 
 const LENS_COLORS = [
-  { id: "grey", label: "Classic Grey", hex: "#4a4a4a" },
-  { id: "amber", label: "Brown/Amber", hex: "#8b5a2b" },
-  { id: "green", label: "Green", hex: "#35513e" },
-  { id: "blue", label: "Blue Mirror", hex: "#5c7a8a" },
-  { id: "rose", label: "Rose", hex: "#a3697a" },
+  { id: "black", label: "Black", hex: "#20211f" },
+  { id: "grey", label: "Grey", hex: "#4a4a4a" },
+  { id: "brown", label: "Brown", hex: "#8b5a2b" },
   { id: "yellow", label: "Yellow", hex: "#c99a2e" },
 ];
 
@@ -629,13 +620,14 @@ function ThreeDGlasses({ cfg, rotation }: { cfg: any, rotation: number }) {
    MAIN APP
 --------------------------------------------------------- */
 export default function App() {
-  const [activeTab, setActiveTab] = useState(TABS[0]);
-  const [rotation, setRotation] = useState(0); // 3D View Angle
+  const activeTab: string = "Frame";
+  const [rotation, setRotation] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
   
   // Configuration State
   const [cfg, setCfg] = useState({
     shape: "wayfarer",
-    frameColor: "matte-black",
+    frameColor: "black",
     material: "acetate",
     finish: "matte",
     frameWidth: "standard",
@@ -754,13 +746,13 @@ export default function App() {
         {/* Mobile Drag Handle */}
         <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mt-3 mb-1 md:hidden shrink-0"></div>
 
-        {/* Tabs Navigation */}
-        <div className="flex overflow-x-auto hide-scrollbar border-b border-gray-200 px-4 md:px-6 pt-2 md:pt-6 shrink-0 relative bg-white md:sticky md:top-0 z-10 shadow-[0_10px_10px_-10px_rgba(0,0,0,0.05)]">
+        {/* Single-page controls */}
+        <div className="hidden">
           <div className="flex gap-4 md:gap-6">
             {TABS.map(tab => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => undefined}
                 className={`pb-3 md:pb-4 text-xs md:text-sm font-medium whitespace-nowrap transition-colors relative
                   ${activeTab === tab ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
               >
@@ -799,31 +791,39 @@ export default function App() {
                 </div>
 
                 <div>
-                  <SectionTitle>Material</SectionTitle>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {FRAME_MATERIALS.map(m => (
-                      <OptionCard key={m.id} label={m.label} selected={cfg.material === m.id} onClick={() => updateCfg("material")(m.id)} />
+                  <SectionTitle>Shade Color</SectionTitle>
+                  <div className="flex flex-wrap gap-4">
+                    {LENS_COLORS.map(c => (
+                      <Swatch key={c.id} hex={c.hex} label={c.label} selected={cfg.lensColor === c.id} onClick={() => updateCfg("lensColor")(c.id)} />
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <SectionTitle>Finish</SectionTitle>
-                  <div className="grid grid-cols-2 gap-3">
-                    {FRAME_FINISHES.map(f => (
-                      <OptionCard key={f.id} label={f.label} selected={cfg.finish === f.id} onClick={() => updateCfg("finish")(f.id)} />
+                  <SectionTitle>Size</SectionTitle>
+                  <div className="grid grid-cols-3 gap-3">
+                    {SIZES.map(s => (
+                      <OptionCard key={s.id} label={s.label.replace(/ \(.+\)/, "")} selected={cfg.size === s.id} onClick={() => updateCfg("size")(s.id)} />
                     ))}
                   </div>
                 </div>
 
-                <div>
-                  <SectionTitle>Width / Fit</SectionTitle>
-                  <div className="space-y-3">
-                    {FRAME_WIDTHS.map(w => (
-                      <OptionCard key={w.id} label={w.label} selected={cfg.frameWidth === w.id} onClick={() => updateCfg("frameWidth")(w.id)} />
-                    ))}
+                <button
+                  type="button"
+                  onClick={() => setSubmitted(true)}
+                  className="w-full rounded-xl bg-gray-900 px-5 py-4 text-sm font-semibold text-white transition hover:bg-gray-700"
+                >
+                  Click here to submit
+                </button>
+
+                {submitted && (
+                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true" aria-labelledby="thank-you-title">
+                    <div className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-2xl">
+                      <h2 id="thank-you-title" className="text-xl font-semibold text-gray-900">Yeah! Thank you for Customising your sunglass</h2>
+                      <button type="button" onClick={() => setSubmitted(false)} className="mt-6 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-700">Close</button>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
 
@@ -831,7 +831,7 @@ export default function App() {
             {activeTab === "Lenses" && (
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div>
-                  <SectionTitle>Lens Tint Color</SectionTitle>
+                  <SectionTitle>Shade Color</SectionTitle>
                   <div className="flex flex-wrap gap-4">
                     {LENS_COLORS.map(c => (
                       <Swatch key={c.id} hex={c.hex} label={c.label} selected={cfg.lensColor === c.id} onClick={() => updateCfg("lensColor")(c.id)} />
