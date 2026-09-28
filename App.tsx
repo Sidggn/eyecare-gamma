@@ -668,8 +668,9 @@ export default function App() {
     const shape = FRAME_SHAPES.find(item => item.id === cfg.shape)?.label ?? cfg.shape;
     const frameColor = FRAME_COLORS.find(item => item.id === cfg.frameColor)?.label ?? cfg.frameColor;
     const shadeColor = LENS_COLORS.find(item => item.id === cfg.lensColor)?.label ?? cfg.lensColor;
-    const size = SIZES.find(item => item.id === cfg.size)?.label ?? cfg.size;
-    const summaryWindow = window.open("", "_blank", "width=640,height=720");
+  const size = SIZES.find(item => item.id === cfg.size)?.label ?? cfg.size;
+  const engravedName = cfg.engraveName?.trim() || "Not added";
+  const summaryWindow = window.open("", "_blank", "width=640,height=720");
 
     if (!summaryWindow) return;
 
@@ -697,8 +698,9 @@ export default function App() {
       <dl>
         <div><dt>Frame shape</dt><dd>${shape}</dd></div>
         <div><dt>Frame color</dt><dd>${frameColor}</dd></div>
-        <div><dt>Shade color</dt><dd>${shadeColor}</dd></div>
-        <div><dt>Size</dt><dd>${size}</dd></div>
+  <div><dt>Shade color</dt><dd>${shadeColor}</dd></div>
+  <div><dt>Size</dt><dd>${size}</dd></div>
+  <div><dt>Engraved name</dt><dd>${engravedName}</dd></div>
       </dl>
     </main>
   </body>
@@ -846,6 +848,19 @@ export default function App() {
                       <OptionCard key={s.id} label={s.label.replace(/ \(.+\)/, "")} selected={cfg.size === s.id} onClick={() => updateCfg("size")(s.id)} />
                     ))}
                   </div>
+                </div>
+
+                <div>
+                  <SectionTitle>Engraved Name</SectionTitle>
+                  <input
+                    type="text"
+                    maxLength={20}
+                    placeholder="Enter your name"
+                    value={cfg.engraveName}
+                    onChange={(e) => updateCfg("engraveName")(e.target.value)}
+                    className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition-shadow focus:border-gray-900 focus:ring-1 focus:ring-gray-900"
+                    aria-label="Engraved name"
+                  />
                 </div>
 
                 <button
