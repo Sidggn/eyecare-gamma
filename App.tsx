@@ -40,11 +40,9 @@ const FRAME_WIDTHS = [
 ];
 
 const LENS_COLORS = [
-  { id: "grey", label: "Classic Grey", hex: "#4a4a4a" },
-  { id: "amber", label: "Brown/Amber", hex: "#8b5a2b" },
-  { id: "green", label: "Green", hex: "#35513e" },
-  { id: "blue", label: "Blue Mirror", hex: "#5c7a8a" },
-  { id: "rose", label: "Rose", hex: "#a3697a" },
+  { id: "black", label: "Black", hex: "#20211f" },
+  { id: "grey", label: "Grey", hex: "#4a4a4a" },
+  { id: "brown", label: "Brown", hex: "#8b5a2b" },
   { id: "yellow", label: "Yellow", hex: "#c99a2e" },
 ];
 
@@ -793,6 +791,15 @@ export default function App() {
                 </div>
 
                 <div>
+                  <SectionTitle>Shade Color</SectionTitle>
+                  <div className="flex flex-wrap gap-4">
+                    {LENS_COLORS.map(c => (
+                      <Swatch key={c.id} hex={c.hex} label={c.label} selected={cfg.lensColor === c.id} onClick={() => updateCfg("lensColor")(c.id)} />
+                    ))}
+                  </div>
+                </div>
+
+                <div>
                   <SectionTitle>Size</SectionTitle>
                   <div className="grid grid-cols-3 gap-3">
                     {SIZES.map(s => (
@@ -824,7 +831,7 @@ export default function App() {
             {activeTab === "Lenses" && (
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div>
-                  <SectionTitle>Lens Tint Color</SectionTitle>
+                  <SectionTitle>Shade Color</SectionTitle>
                   <div className="flex flex-wrap gap-4">
                     {LENS_COLORS.map(c => (
                       <Swatch key={c.id} hex={c.hex} label={c.label} selected={cfg.lensColor === c.id} onClick={() => updateCfg("lensColor")(c.id)} />
